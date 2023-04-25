@@ -1,0 +1,85 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      header {
+        font-size: 32px;
+      }
+      .box {
+        border-radius: 25px;
+        border: 2px solid rgb(131, 131, 172);
+        background-color: white;
+        padding: 10px;
+      }
+      body {
+        background-color: rgb(72, 72, 126);
+      }
+      br {
+        height: 1px;;
+      }
+      ul.flashes {
+        border-radius: 1rem;
+        padding: 1.5rem;
+        color: white;
+        border: 3px solid white;
+        background-color: rgb(22, 14, 72);
+      }
+
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flashes">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  
+    <div class="box">
+    <form action="/" method="POST">
+      <header>Stock Data Visualizer</header>
+      <label  for="symbol">Choose Symbol</label>
+      <select id="symbol" name="symbol">
+        <option value="">Select a Symbol</option>
+        {% for row in csv_data %}
+        <option value="{{ row[0] }}">{{ row[0] }}</option>
+        {% endfor %}
+      </select>
+      <br></br>
+      <label  for="Chart_Type">Choose Chart Type</label>
+      <select id="Chart_Type" name="Chart_Type">
+        <option value="">Select a Chart Type</option>
+        <option id="line" value="line">Line</option>
+        <option value="Bar">Bar</option>
+      </select>
+      <br></br>
+      <label  for="Time_Series">Choose Time Series</label>
+      <select id="Time_Series" name="Time_Series">
+        <option value="">Select Time Series</option>
+        <option id="Intraday" value="Intraday">Intraday</option>
+        <option id="Daily" value="Daily">Daily</option>
+        <option id="Weekly" value="Weekly">Weekly</option>
+        <option id="Monthly" value="Montly">Monthly</option>
+      </select>
+      <br></br>
+      <label for="bDate">Chose Beginning Date</label>
+      <input type="date" id="bDate" name="bDate">
+      <br></br>
+      <label for="eDate">Chose Ending Date</label>
+      <input type="date" id="eDate" name="eDate">
+      <br></br>
+      <button id="submit" type="submit">Submit</button>
+    </form>
+      {% if graph_uri %}
+        <div id="chart">
+          <embed type="image/svg+xml" src= {{ graph_uri|safe }} />
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
