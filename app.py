@@ -116,7 +116,7 @@ def extract_data(json: dict):
     try:
         time_series = [k for k in json.keys() if re.match(r".*Time Series.*", k)][0]
     except IndexError:
-        flash("You need to enter the other information...")
+        print("Something went wrong....")
     data_points = [{"date": k, **v} for k, v in json[time_series].items()]
     data_points.sort(key = get_date)
     start = get_date_index(data_points, GetBeginningDate())
@@ -246,12 +246,16 @@ def stocks():
             SetTimeSeries(time_series)
             SetDates((bDate_str, eDate_str))
             pullStock()
-            if chart_type == 'line':
-                graph_uri = create_line_graph()
-            else:
-                graph_uri = create_bar_graph()
-                
-            return render_template("stock.html", csv_data=csv_data, graph_uri=graph_uri)
+            try:
+                if chart_type == 'line':
+                    graph_uri = create_line_graph()
+                else:
+                    graph_uri = create_bar_graph()
+                    
+                return render_template("stock.html", csv_data=csv_data, graph_uri=graph_uri)
+            except Exception as e:
+                flash("Cannot find information for this query- did you enter it correctly?")
+                return redirect(url_for('stocks'))
     return render_template("stock.html", csv_data=csv_data)
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
